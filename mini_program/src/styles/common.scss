@@ -1,0 +1,84 @@
+.container {
+  padding: $spacing-lg;
+}
+
+.card {
+  background: #fff;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &--primary {
+    background: $primary-color;
+    color: #fff;
+    
+    &:active {
+      background: $primary-light;
+    }
+  }
+  
+  &--secondary {
+    background: $primary-light;
+    color: #fff;
+  }
+  
+  &--outline {
+    border: 2rpx solid $primary-color;
+    color: $primary-color;
+  }
+  
+  &--danger {
+    background: $error-color;
+    color: #fff;
+  }
+}
+
+.text {
+  &--primary {
+    color: $text-primary;
+  }
+  
+  &--secondary {
+    color: $text-secondary;
+  }
+  
+  &--success {
+    color: $success-color;
+  }
+  
+  &--error {
+    color: $error-color;
+  }
+  
+  &--accent {
+    color: $accent-color;
+  }
+}
+
+.flex {
+  display: flex;
+  
+  &--center {
+    align-items: center;
+    justify-content: center;
+  }
+  
+  &--between {
+    justify-content: space-between;
+  }
+  
+  &--column {
+    flex-direction: column;
+  }
+}
