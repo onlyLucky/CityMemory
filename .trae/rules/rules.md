@@ -1,3 +1,10 @@
+---
+alwaysApply: false
+globs: 
+  - 'manage/**/*'
+  - 'server/**/*'
+  - 'miniprogram/**/*'
+---
 ## 项目规则
 
 1. 项目使用pnpm作为包管理器
