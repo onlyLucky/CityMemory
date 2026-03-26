@@ -16,9 +16,8 @@ class AdminFeedbackController {
 
   async getFeedbackDetail(ctx: Context) {
     const feedbackId = parseInt(ctx.params.feedbackId);
-    const result = await AdminFeedbackService.getList(1, 1, undefined, undefined);
-    const feedback = result.list.find((f: any) => f.id === feedbackId);
-    success(ctx, feedback || null);
+    const result = await AdminFeedbackService.getDetail(feedbackId);
+    success(ctx, result);
   }
 
   async replyFeedback(ctx: Context) {
@@ -31,6 +30,7 @@ class AdminFeedbackController {
 
   async deleteFeedback(ctx: Context) {
     const feedbackId = parseInt(ctx.params.feedbackId);
+    await AdminFeedbackService.delete(feedbackId);
     success(ctx, null, '删除成功');
   }
 }

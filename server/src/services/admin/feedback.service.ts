@@ -64,6 +64,45 @@ export class AdminFeedbackService {
       replyAdminId: adminId,
     });
   }
+
+  async getDetail(feedbackId: number) {
+    const feedback = await UserFeedback.findByPk(feedbackId, {
+      include: [{ model: UserInfo, attributes: ['id', 'nickname', 'avatar'] }],
+    });
+
+    if (!feedback) {
+      throw new AppError(ERROR_CODES.NOT_FOUND, '反馈不存在');
+    }
+
+    return {
+      id: feedback.id,
+      userId: feedback.userId,
+      user: feedback.user
+        ? {
+            id: feedback.user.id,
+            nickname: feedback.user.nickname,
+            avatar: feedback.user.avatar,
+          }
+        : null,
+      feedbackType: feedback.feedbackType,
+      title: feedback.title,
+      content: feedback.content,
+      images: feedback.images ? feedback.images.split(',') : [],
+      status: feedback.status,
+      reply: feedback.reply,
+      replyTime: feedback.replyTime,
+      createTime: feedback.createTime,
+    };
+  }
+
+  async delete(feedbackId: number) {
+    const feedback = await UserFeedback.findByPk(feedbackId);
+    if (!feedback) {
+      throw new AppError(ERROR_CODES.NOT_FOUND, '反馈不存在');
+    }
+
+    await feedback.destroy();
+  }
 }
 
 export default new AdminFeedbackService();
