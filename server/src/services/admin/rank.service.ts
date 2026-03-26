@@ -20,13 +20,16 @@ export class AdminRankService {
 
     switch (rankType) {
       case 'total':
-        const totalResult = await UserProgress.find()
-          .sort({ totalStars: -1 })
-          .skip(offset)
-          .limit(pageSize)
-          .exec();
+        const [totalResult, totalCount] = await Promise.all([
+          UserProgress.find()
+            .sort({ totalStars: -1 })
+            .skip(offset)
+            .limit(pageSize)
+            .exec(),
+          UserProgress.countDocuments().exec(),
+        ]);
         
-        total = await UserProgress.countDocuments().exec();
+        total = totalCount;
         
         const userIds = totalResult.map((p) => p.userId);
         const users = await UserInfo.findAll({
@@ -46,13 +49,16 @@ export class AdminRankService {
         break;
 
       case 'accuracy':
-        const accuracyResult = await UserProgress.find({ totalCorrect: { $gt: 10 } })
-          .sort({ accuracy: -1 })
-          .skip(offset)
-          .limit(pageSize)
-          .exec();
+        const [accuracyResult, accuracyCount] = await Promise.all([
+          UserProgress.find({ totalCorrect: { $gt: 10 } })
+            .sort({ accuracy: -1 })
+            .skip(offset)
+            .limit(pageSize)
+            .exec(),
+          UserProgress.countDocuments({ totalCorrect: { $gt: 10 } }).exec(),
+        ]);
         
-        total = await UserProgress.countDocuments({ totalCorrect: { $gt: 10 } }).exec();
+        total = accuracyCount;
         
         const accuracyUserIds = accuracyResult.map((p) => p.userId);
         const accuracyUsers = await UserInfo.findAll({

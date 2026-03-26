@@ -23,14 +23,31 @@ class AdminUserController {
   }
 
   async createUser(ctx: Context) {
-    const data = ctx.validatedData;
-    success(ctx, data, '创建成功');
+    const data = ctx.validatedData as {
+      nickname: string;
+      avatar?: string;
+      gender?: number;
+      province?: string;
+      city?: string;
+      country?: string;
+    };
+    const result = await AdminUserService.create(data);
+    success(ctx, result, '创建成功');
   }
 
   async updateUser(ctx: Context) {
     const userId = parseInt(ctx.params.userId);
-    const data = ctx.validatedData as Record<string, unknown>;
-    success(ctx, { userId, ...data }, '更新成功');
+    const data = ctx.validatedData as {
+      nickname?: string;
+      avatar?: string;
+      gender?: number;
+      province?: string;
+      city?: string;
+      country?: string;
+      status?: number;
+    };
+    const result = await AdminUserService.update(userId, data);
+    success(ctx, result, '更新成功');
   }
 
   async deleteUser(ctx: Context) {
