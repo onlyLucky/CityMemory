@@ -12,7 +12,7 @@ export default class CountryInfo extends Model {
     primaryKey: true,
     autoIncrement: true,
   })
-  id!: number;
+  declare id: number;
 
   @ForeignKey(() => RegionInfo)
   @Column({

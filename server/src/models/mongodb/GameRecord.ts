@@ -18,6 +18,7 @@ export interface GameRecordDocument extends Document {
   correctCount: number;
   wrongCount: number;
   stars: number;
+  accuracy: number;
   isCompleted: boolean;
   answers: AnswerRecordData[];
   createTime: Date;

@@ -170,11 +170,11 @@ export const redisUtils = {
     withScores = false,
   ): Promise<T[]> {
     const client = getRedis();
-    const args: (string | number)[] = [key, start, stop];
     if (withScores) {
-      args.push('WITHSCORES');
+      const data = await client.zrange(key, start, stop, 'WITHSCORES');
+      return data as unknown as T[];
     }
-    const data = await client.zrange(args as [string, number, number, string?]);
+    const data = await client.zrange(key, start, stop);
     return data as unknown as T[];
   },
 
@@ -185,11 +185,11 @@ export const redisUtils = {
     withScores = false,
   ): Promise<T[]> {
     const client = getRedis();
-    const args: (string | number)[] = [key, start, stop];
     if (withScores) {
-      args.push('WITHSCORES');
+      const data = await client.zrevrange(key, start, stop, 'WITHSCORES');
+      return data as unknown as T[];
     }
-    const data = await client.zrevrange(args as [string, number, number, string?]);
+    const data = await client.zrevrange(key, start, stop);
     return data as unknown as T[];
   },
 

@@ -5,14 +5,13 @@ import { success } from '../../utils/response';
 class AdminCountryController {
   async getCountryList(ctx: Context) {
     const query = ctx.query;
-    const params = {
+    const result = await AdminCountryService.getCountryList({
       page: parseInt(query.page as string) || 1,
       pageSize: parseInt(query.pageSize as string) || 10,
       countryName: query.countryName as string,
       regionId: query.regionId ? parseInt(query.regionId as string) : undefined,
       status: query.status ? parseInt(query.status as string) : undefined,
-    };
-    const result = await AdminCountryService.getCountryList(params);
+    });
     success(ctx, result);
   }
 
@@ -23,14 +22,31 @@ class AdminCountryController {
   }
 
   async createCountry(ctx: Context) {
-    const data = ctx.validatedData;
+    const data = ctx.validatedData as {
+      countryName: string;
+      countryNameEn?: string;
+      countryCode?: string;
+      flagImage?: string;
+      description?: string;
+      regionId: number;
+      sortOrder?: number;
+    };
     const result = await AdminCountryService.createCountry(data);
     success(ctx, result, '创建成功');
   }
 
   async updateCountry(ctx: Context) {
     const countryId = parseInt(ctx.params.countryId);
-    const data = ctx.validatedData;
+    const data = ctx.validatedData as {
+      countryName?: string;
+      countryNameEn?: string;
+      countryCode?: string;
+      flagImage?: string;
+      description?: string;
+      regionId?: number;
+      sortOrder?: number;
+      status?: number;
+    };
     const result = await AdminCountryService.updateCountry(countryId, data);
     success(ctx, result, '更新成功');
   }

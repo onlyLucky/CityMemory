@@ -4,7 +4,7 @@ import { success } from '../../utils/response';
 
 class ShopController {
   async getShopItems(ctx: Context) {
-    const items = await ShopService.getShopItems();
+    const items = await ShopService.getItems();
     success(ctx, items);
   }
 
@@ -14,16 +14,17 @@ class ShopController {
       itemId: number;
       quantity: number;
     };
-    const result = await ShopService.purchaseItem(userId, data.itemId, data.quantity);
+    const result = await ShopService.buyItem(userId, data.itemId, data.quantity || 1);
     success(ctx, result, '购买成功');
   }
 
   async exchangeStars(ctx: Context) {
     const userId = parseInt(ctx.user!.userId);
     const data = ctx.validatedData as {
-      stars: number;
+      itemId: number;
+      quantity: number;
     };
-    const result = await ShopService.exchangeStars(userId, data.stars);
+    const result = await ShopService.buyItem(userId, data.itemId, data.quantity || 1);
     success(ctx, result, '兑换成功');
   }
 }

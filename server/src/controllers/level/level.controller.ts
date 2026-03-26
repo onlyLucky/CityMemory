@@ -51,18 +51,18 @@ class LevelController {
     const data = ctx.validatedData as {
       sessionId: string;
       questionId: number;
+      questionType: number;
+      questionContent: string;
+      cityId: string;
+      cityName: string;
+      provinceId?: string;
+      provinceName?: string;
       userAnswer: string;
       correctAnswer: string;
+      options: Array<{ key: string; value: string }>;
       timeSpent: number;
     };
-    await LevelService.recordAnswerFail(
-      userId,
-      data.sessionId,
-      data.questionId,
-      data.userAnswer,
-      data.correctAnswer,
-      data.timeSpent,
-    );
+    await LevelService.recordAnswerFail(userId, data);
     success(ctx, null, '记录成功');
   }
 
@@ -80,7 +80,7 @@ class LevelController {
   async abandonLevel(ctx: Context) {
     const userId = parseInt(ctx.user!.userId);
     const sessionId = ctx.params.sessionId;
-    await LevelService.abandonLevel(userId, sessionId);
+    await LevelService.giveUpLevel(userId, sessionId);
     success(ctx, null, '已放弃关卡');
   }
 }

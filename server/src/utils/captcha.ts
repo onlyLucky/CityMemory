@@ -1,6 +1,6 @@
 import svgCaptcha from 'svg-captcha';
 import { v4 as uuidv4 } from 'uuid';
-import { redisUtils } from '../database/redis';
+import { redisUtils } from '../config/redis';
 
 export interface CaptchaData {
   captchaId: string;

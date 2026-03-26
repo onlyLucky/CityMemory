@@ -15,7 +15,7 @@ export interface Level {
 }
 
 export interface LevelDetail extends Level {
-  questions?: Question[];
+  questions?: QuestionForGame[];
 }
 
 export interface LevelProgress {

@@ -95,7 +95,7 @@ export class LevelService {
 
     return levels.map((level) => {
       const progress = levelProgressMap.get(String(level.id));
-      let status = LEVEL_STATUS.LOCKED;
+      let status: number = LEVEL_STATUS.LOCKED;
 
       if (level.levelNumber === 1) {
         status = LEVEL_STATUS.UNLOCKED;
@@ -138,7 +138,7 @@ export class LevelService {
     const userProgress = await UserProgress.findOne({ userId }).exec();
     const progress = userProgress?.levelProgress?.get(String(levelId));
 
-    let status = LEVEL_STATUS.LOCKED;
+    let status: number = LEVEL_STATUS.LOCKED;
     if (level.levelNumber === 1) {
       status = LEVEL_STATUS.UNLOCKED;
     } else if (progress) {

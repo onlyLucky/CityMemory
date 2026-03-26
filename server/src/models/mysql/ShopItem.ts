@@ -11,7 +11,7 @@ export default class ShopItem extends Model {
     primaryKey: true,
     autoIncrement: true,
   })
-  id!: number;
+  declare id: number;
 
   @Column({
     type: DataType.TINYINT,

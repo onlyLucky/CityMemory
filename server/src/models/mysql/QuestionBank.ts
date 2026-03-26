@@ -11,7 +11,7 @@ export default class QuestionBank extends Model {
     primaryKey: true,
     autoIncrement: true,
   })
-  id!: number;
+  declare id: number;
 
   @ForeignKey(() => LevelInfo)
   @Column({

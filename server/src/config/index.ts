@@ -37,6 +37,8 @@ interface JwtConfig {
 interface WechatConfig {
   appId: string;
   secret: string;
+  loginUrl: string;
+  grantType: string;
 }
 
 interface AppConfig {
@@ -116,6 +118,8 @@ const config: Config = {
   wechat: {
     appId: process.env.WECHAT_APPID || '',
     secret: process.env.WECHAT_SECRET || '',
+    loginUrl: process.env.WECHAT_LOGIN_URL || 'https://api.weixin.qq.com/sns/jscode2session',
+    grantType: process.env.WECHAT_GRANT_TYPE || 'authorization_code',
   },
   log: {
     level: process.env.LOG_LEVEL || 'info',

@@ -6,14 +6,13 @@ import { v4 as uuidv4 } from 'uuid';
 class AdminCityController {
   async getCityList(ctx: Context) {
     const query = ctx.query;
-    const params = {
+    const result = await AdminCityService.getCityList({
       page: parseInt(query.page as string) || 1,
       pageSize: parseInt(query.pageSize as string) || 10,
       cityName: query.cityName as string,
       provinceId: query.provinceId ? parseInt(query.provinceId as string) : undefined,
       status: query.status ? parseInt(query.status as string) : undefined,
-    };
-    const result = await AdminCityService.getCityList(params);
+    });
     success(ctx, result);
   }
 
@@ -24,14 +23,31 @@ class AdminCityController {
   }
 
   async createCity(ctx: Context) {
-    const data = ctx.validatedData;
+    const data = ctx.validatedData as {
+      cityName: string;
+      cityNameEn?: string;
+      description?: string;
+      latitude?: number;
+      longitude?: number;
+      provinceId: number;
+      sortOrder?: number;
+    };
     const result = await AdminCityService.createCity(data);
     success(ctx, result, '创建成功');
   }
 
   async updateCity(ctx: Context) {
     const cityId = parseInt(ctx.params.cityId);
-    const data = ctx.validatedData;
+    const data = ctx.validatedData as {
+      cityName?: string;
+      cityNameEn?: string;
+      description?: string;
+      latitude?: number;
+      longitude?: number;
+      provinceId?: number;
+      sortOrder?: number;
+      status?: number;
+    };
     const result = await AdminCityService.updateCity(cityId, data);
     success(ctx, result, '更新成功');
   }

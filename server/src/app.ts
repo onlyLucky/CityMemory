@@ -56,7 +56,6 @@ const initApp = async () => {
           return /text|json|javascript|css/i.test(contentType);
         },
         threshold: 2048,
-        flush: require('zlib').constants.Z_SYNC_FLUSH,
       }),
     );
 

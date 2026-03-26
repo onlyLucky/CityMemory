@@ -11,7 +11,7 @@ export default class UserFeedback extends Model {
     primaryKey: true,
     autoIncrement: true,
   })
-  id!: number;
+  declare id: number;
 
   @ForeignKey(() => UserInfo)
   @Column({

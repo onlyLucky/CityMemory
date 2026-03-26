@@ -7,17 +7,16 @@ class FeedbackController {
     const userId = parseInt(ctx.user!.userId);
     const data = ctx.validatedData as {
       feedbackType: number;
+      title: string;
       content: string;
       images?: string[];
-      contact?: string;
     };
-    const result = await FeedbackService.submitFeedback(
-      userId,
-      data.feedbackType,
-      data.content,
-      data.images,
-      data.contact,
-    );
+    const result = await FeedbackService.submit(userId, {
+      feedbackType: data.feedbackType,
+      title: data.title,
+      content: data.content,
+      images: data.images,
+    });
     success(ctx, result, '提交成功');
   }
 
@@ -26,14 +25,14 @@ class FeedbackController {
     const page = parseInt(ctx.query.page as string) || 1;
     const pageSize = parseInt(ctx.query.pageSize as string) || 10;
 
-    const result = await FeedbackService.getUserFeedbacks(userId, page, pageSize);
+    const result = await FeedbackService.getList(userId, page, pageSize);
     success(ctx, result);
   }
 
   async getFeedbackDetail(ctx: Context) {
     const userId = parseInt(ctx.user!.userId);
     const feedbackId = parseInt(ctx.params.feedbackId);
-    const result = await FeedbackService.getFeedbackDetail(userId, feedbackId);
+    const result = await FeedbackService.getDetail(userId, feedbackId);
     success(ctx, result);
   }
 }

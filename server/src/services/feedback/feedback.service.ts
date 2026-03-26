@@ -15,11 +15,14 @@ export class FeedbackService {
 
     return {
       id: feedback.id,
+      userId: feedback.userId,
       feedbackType: feedback.feedbackType,
       title: feedback.title,
       content: feedback.content,
+      images: feedback.images ? feedback.images.split(',') : [],
       status: feedback.status,
       createTime: feedback.createTime,
+      updateTime: feedback.updateTime,
     };
   }
 
@@ -42,6 +45,26 @@ export class FeedbackService {
       total: count,
       page,
       pageSize,
+    };
+  }
+
+  async getDetail(userId: number, feedbackId: number) {
+    const feedback = await UserFeedback.findOne({
+      where: { id: feedbackId, userId },
+    });
+
+    if (!feedback) {
+      return null;
+    }
+
+    return {
+      id: feedback.id,
+      feedbackType: feedback.feedbackType,
+      title: feedback.title,
+      content: feedback.content,
+      images: feedback.images ? feedback.images.split(',') : [],
+      status: feedback.status,
+      createTime: feedback.createTime,
     };
   }
 }

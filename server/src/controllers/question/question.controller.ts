@@ -4,26 +4,26 @@ import { success } from '../../utils/response';
 
 class QuestionController {
   async getRandomQuestions(ctx: Context) {
-    const userId = parseInt(ctx.user!.userId);
     const data = ctx.validatedData as {
-      levelId: number;
+      levelId?: number;
       count?: number;
+      difficulty?: number;
     };
-    const questions = await QuestionService.getRandomQuestions(userId, data.levelId, data.count);
+    const questions = await QuestionService.getRandomQuestions(
+      data.count || 5,
+      undefined,
+      data.difficulty,
+    );
     success(ctx, questions);
   }
 
   async submitAnswer(ctx: Context) {
-    const userId = parseInt(ctx.user!.userId);
     const data = ctx.validatedData as {
-      sessionId: string;
-      questionId: number;
+      questionId: string;
       answer: string;
       timeSpent: number;
     };
-    const result = await QuestionService.submitAnswer(
-      userId,
-      data.sessionId,
+    const result = await QuestionService.submitRandomAnswer(
       data.questionId,
       data.answer,
       data.timeSpent,

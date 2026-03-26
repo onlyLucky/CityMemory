@@ -203,4 +203,4 @@ export interface UserState extends Koa.DefaultState {
   admin?: JwtPayload;
 }
 
-export type UserContext = Koa.Context<UserState>;
+export type UserContext = Koa.ParameterizedContext<UserState>;

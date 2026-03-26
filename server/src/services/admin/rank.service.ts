@@ -1,9 +1,7 @@
-import { Op } from 'sequelize';
-import { Sequelize } from 'sequelize-typescript';
 import UserInfo from '../../models/mysql/UserInfo';
 import { UserProgress, GameRecord } from '../../models/mongodb';
 import { ERROR_CODES, AppError } from '../../constants/error';
-import { redis } from '../../config/redis';
+import { redisUtils } from '../../config/redis';
 
 export class AdminRankService {
   async getRankingList(params: {
@@ -14,7 +12,7 @@ export class AdminRankService {
     startDate?: string;
     endDate?: string;
   }) {
-    const { page = 1, pageSize = 50, rankType = 'total', regionId, startDate, endDate } = params;
+    const { page = 1, pageSize = 50, rankType = 'total', startDate, endDate } = params;
     const offset = (page - 1) * pageSize;
 
     let rankingData: any[] = [];
@@ -22,41 +20,55 @@ export class AdminRankService {
 
     switch (rankType) {
       case 'total':
-        const totalResult = await UserProgress.findAndCountAll({
-          offset,
-          limit: pageSize,
-          order: [['totalStars', 'DESC']],
-          include: [
-            {
-              model: UserInfo,
-              as: 'user',
-              attributes: ['id', 'nickname', 'avatar'],
-              where: regionId ? { province: { [Op.ne]: null } } : undefined,
-              required: true,
-            },
-          ],
+        const totalResult = await UserProgress.find()
+          .sort({ totalStars: -1 })
+          .skip(offset)
+          .limit(pageSize)
+          .exec();
+        
+        total = await UserProgress.countDocuments().exec();
+        
+        const userIds = totalResult.map((p) => p.userId);
+        const users = await UserInfo.findAll({
+          where: { id: userIds },
+          attributes: ['id', 'nickname', 'avatar'],
         });
-        rankingData = totalResult.rows;
-        total = totalResult.count;
+        const userMap = new Map(users.map((u) => [u.id, u]));
+        
+        rankingData = totalResult.map((p) => ({
+          userId: p.userId,
+          user: userMap.get(p.userId),
+          totalStars: p.totalStars,
+          accuracy: p.accuracy,
+          totalCorrect: p.totalCorrect,
+          totalWrong: p.totalWrong,
+        }));
         break;
 
       case 'accuracy':
-        const accuracyResult = await UserProgress.findAndCountAll({
-          offset,
-          limit: pageSize,
-          order: [['accuracy', 'DESC']],
-          where: { totalCorrect: { [Op.gt]: 10 } },
-          include: [
-            {
-              model: UserInfo,
-              as: 'user',
-              attributes: ['id', 'nickname', 'avatar'],
-              required: true,
-            },
-          ],
+        const accuracyResult = await UserProgress.find({ totalCorrect: { $gt: 10 } })
+          .sort({ accuracy: -1 })
+          .skip(offset)
+          .limit(pageSize)
+          .exec();
+        
+        total = await UserProgress.countDocuments({ totalCorrect: { $gt: 10 } }).exec();
+        
+        const accuracyUserIds = accuracyResult.map((p) => p.userId);
+        const accuracyUsers = await UserInfo.findAll({
+          where: { id: accuracyUserIds },
+          attributes: ['id', 'nickname', 'avatar'],
         });
-        rankingData = accuracyResult.rows;
-        total = accuracyResult.count;
+        const accuracyUserMap = new Map(accuracyUsers.map((u) => [u.id, u]));
+        
+        rankingData = accuracyResult.map((p) => ({
+          userId: p.userId,
+          user: accuracyUserMap.get(p.userId),
+          totalStars: p.totalStars,
+          accuracy: p.accuracy,
+          totalCorrect: p.totalCorrect,
+          totalWrong: p.totalWrong,
+        }));
         break;
 
       case 'weekly':
@@ -64,18 +76,22 @@ export class AdminRankService {
         weekStart.setDate(weekStart.getDate() - 7);
         weekStart.setHours(0, 0, 0, 0);
 
+        const matchCondition: any = {
+          createTime: { $gte: weekStart },
+        };
+        if (startDate) {
+          matchCondition.createTime = { $gte: new Date(startDate) };
+        }
+        if (endDate) {
+          matchCondition.createTime = { ...matchCondition.createTime, $lte: new Date(endDate) };
+        }
+
         const weeklyRecords = await GameRecord.aggregate([
-          {
-            $match: {
-              createTime: { $gte: weekStart },
-              ...(startDate && { createTime: { $gte: new Date(startDate) } }),
-              ...(endDate && { createTime: { $lte: new Date(endDate) } }),
-            },
-          },
+          { $match: matchCondition },
           {
             $group: {
               _id: '$userId',
-              totalStars: { $sum: '$starsEarned' },
+              totalStars: { $sum: '$stars' },
               totalGames: { $sum: 1 },
             },
           },
@@ -84,26 +100,26 @@ export class AdminRankService {
           { $limit: pageSize },
         ]);
 
-        const userIds = weeklyRecords.map((r: any) => r._id);
-        const users = await UserInfo.findAll({
-          where: { id: userIds },
+        const weeklyUserIds = weeklyRecords.map((r: any) => r._id);
+        const weeklyUsers = await UserInfo.findAll({
+          where: { id: weeklyUserIds },
           attributes: ['id', 'nickname', 'avatar'],
         });
-        const userMap = new Map(users.map((u) => [u.id, u]));
+        const weeklyUserMap = new Map(weeklyUsers.map((u) => [u.id, u]));
 
         rankingData = weeklyRecords.map((r: any) => ({
           userId: r._id,
+          user: weeklyUserMap.get(r._id),
           totalStars: r.totalStars,
           totalGames: r.totalGames,
-          user: userMap.get(r._id),
         }));
-        total = await GameRecord.distinct('userId', {
-          createTime: { $gte: weekStart },
-        }).then((ids) => ids.length);
+        
+        const distinctUserIds = await GameRecord.distinct('userId', matchCondition);
+        total = distinctUserIds.length;
         break;
 
       default:
-        throw new AppError(ERROR_CODES.INVALID_PARAMS, '无效的排行榜类型');
+        throw new AppError(ERROR_CODES.PARAM_ERROR, '无效的排行榜类型');
     }
 
     return {
@@ -133,18 +149,16 @@ export class AdminRankService {
       throw new AppError(ERROR_CODES.USER_NOT_FOUND, '用户不存在');
     }
 
-    const progress = await UserProgress.findOne({ where: { userId } });
+    const progress = await UserProgress.findOne({ userId }).exec();
 
-    const totalStarsRank = await UserProgress.count({
-      where: { totalStars: { [Op.gt]: progress?.totalStars || 0 } },
-    });
+    const totalStarsRank = await UserProgress.countDocuments({
+      totalStars: { $gt: progress?.totalStars || 0 },
+    }).exec();
 
-    const accuracyRank = await UserProgress.count({
-      where: {
-        accuracy: { [Op.gt]: progress?.accuracy || 0 },
-        totalCorrect: { [Op.gt]: 10 },
-      },
-    });
+    const accuracyRank = await UserProgress.countDocuments({
+      accuracy: { $gt: progress?.accuracy || 0 },
+      totalCorrect: { $gt: 10 },
+    }).exec();
 
     const weekStart = new Date();
     weekStart.setDate(weekStart.getDate() - 7);
@@ -160,7 +174,7 @@ export class AdminRankService {
       {
         $group: {
           _id: null,
-          totalStars: { $sum: '$starsEarned' },
+          totalStars: { $sum: '$stars' },
           totalGames: { $sum: 1 },
         },
       },
@@ -177,7 +191,7 @@ export class AdminRankService {
       {
         $group: {
           _id: '$userId',
-          totalStars: { $sum: '$starsEarned' },
+          totalStars: { $sum: '$stars' },
         },
       },
       {
@@ -219,7 +233,7 @@ export class AdminRankService {
 
   async exportRankingData(rankType: string) {
     const cacheKey = `ranking:export:${rankType}`;
-    const cached = await redis.get(cacheKey);
+    const cached = await redisUtils.get<string>(cacheKey);
     if (cached) {
       return JSON.parse(cached);
     }
@@ -228,43 +242,44 @@ export class AdminRankService {
 
     switch (rankType) {
       case 'total':
-        const totalData = await UserProgress.findAll({
-          order: [['totalStars', 'DESC']],
-          limit: 100,
-          include: [
-            {
-              model: UserInfo,
-              as: 'user',
-              attributes: ['id', 'nickname', 'avatar'],
-            },
-          ],
+        const totalData = await UserProgress.find()
+          .sort({ totalStars: -1 })
+          .limit(100)
+          .exec();
+        
+        const totalUserIds = totalData.map((p) => p.userId);
+        const totalUsers = await UserInfo.findAll({
+          where: { id: totalUserIds },
+          attributes: ['id', 'nickname', 'avatar'],
         });
-        data = totalData.map((p: any, i: number) => ({
+        const totalUserMap = new Map(totalUsers.map((u) => [u.id, u]));
+        
+        data = totalData.map((p, i) => ({
           rank: i + 1,
           userId: p.userId,
-          nickname: p.user?.nickname,
+          nickname: totalUserMap.get(p.userId)?.nickname,
           totalStars: p.totalStars,
           accuracy: Math.round(p.accuracy * 100) / 100,
         }));
         break;
 
       case 'accuracy':
-        const accuracyData = await UserProgress.findAll({
-          order: [['accuracy', 'DESC']],
-          where: { totalCorrect: { [Op.gt]: 10 } },
-          limit: 100,
-          include: [
-            {
-              model: UserInfo,
-              as: 'user',
-              attributes: ['id', 'nickname', 'avatar'],
-            },
-          ],
+        const accuracyData = await UserProgress.find({ totalCorrect: { $gt: 10 } })
+          .sort({ accuracy: -1 })
+          .limit(100)
+          .exec();
+        
+        const accuracyUserIds = accuracyData.map((p) => p.userId);
+        const accuracyUsers = await UserInfo.findAll({
+          where: { id: accuracyUserIds },
+          attributes: ['id', 'nickname', 'avatar'],
         });
-        data = accuracyData.map((p: any, i: number) => ({
+        const accuracyUserMap = new Map(accuracyUsers.map((u) => [u.id, u]));
+        
+        data = accuracyData.map((p, i) => ({
           rank: i + 1,
           userId: p.userId,
-          nickname: p.user?.nickname,
+          nickname: accuracyUserMap.get(p.userId)?.nickname,
           accuracy: Math.round(p.accuracy * 100) / 100,
           totalCorrect: p.totalCorrect,
           totalWrong: p.totalWrong,
@@ -272,10 +287,10 @@ export class AdminRankService {
         break;
 
       default:
-        throw new AppError(ERROR_CODES.INVALID_PARAMS, '无效的排行榜类型');
+        throw new AppError(ERROR_CODES.PARAM_ERROR, '无效的排行榜类型');
     }
 
-    await redis.setex(cacheKey, 300, JSON.stringify(data));
+    await redisUtils.set(cacheKey, JSON.stringify(data), 300);
 
     return data;
   }

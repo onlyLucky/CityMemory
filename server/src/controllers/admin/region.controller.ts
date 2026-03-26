@@ -5,14 +5,13 @@ import { success } from '../../utils/response';
 class AdminRegionController {
   async getRegionList(ctx: Context) {
     const query = ctx.query;
-    const params = {
+    const result = await AdminRegionService.getRegionList({
       page: parseInt(query.page as string) || 1,
       pageSize: parseInt(query.pageSize as string) || 10,
       regionName: query.regionName as string,
       regionType: query.regionType ? parseInt(query.regionType as string) : undefined,
       status: query.status ? parseInt(query.status as string) : undefined,
-    };
-    const result = await AdminRegionService.getRegionList(params);
+    });
     success(ctx, result);
   }
 
@@ -23,14 +22,29 @@ class AdminRegionController {
   }
 
   async createRegion(ctx: Context) {
-    const data = ctx.validatedData;
+    const data = ctx.validatedData as {
+      regionName: string;
+      regionNameEn?: string;
+      regionType: number;
+      description?: string;
+      coverImage?: string;
+      sortOrder?: number;
+    };
     const result = await AdminRegionService.createRegion(data);
     success(ctx, result, '创建成功');
   }
 
   async updateRegion(ctx: Context) {
     const regionId = parseInt(ctx.params.regionId);
-    const data = ctx.validatedData;
+    const data = ctx.validatedData as {
+      regionName?: string;
+      regionNameEn?: string;
+      regionType?: number;
+      description?: string;
+      coverImage?: string;
+      sortOrder?: number;
+      status?: number;
+    };
     const result = await AdminRegionService.updateRegion(regionId, data);
     success(ctx, result, '更新成功');
   }

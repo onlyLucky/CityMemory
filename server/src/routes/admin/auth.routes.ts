@@ -1,8 +1,8 @@
 import Router from '@koa/router';
-import { adminAuthMiddleware } from '../middlewares/admin.middleware';
-import { validate, commonSchemas } from '../middlewares/validate.middleware';
+import { adminAuthMiddleware } from '../../middlewares/admin.middleware';
+import { validate, commonSchemas } from '../../middlewares/validate.middleware';
 import Joi from 'joi';
-import AdminAuthController from '../controllers/admin/auth.controller';
+import AdminAuthController from '../../controllers/admin/auth.controller';
 
 const router = new Router();
 

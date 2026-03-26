@@ -9,14 +9,14 @@ import UserInfo from '../../models/mysql/UserInfo';
 import UserTicket from '../../models/mysql/UserTicket';
 import { UserProgress } from '../../models/mongodb';
 import { WechatSessionResponse } from '../../types/common';
-import { UserLoginInput, from '../../types/user';
+import { UserLoginInput } from '../../types/user';
 
 export class UserService {
   async login(data: UserLoginInput, ip: string) {
     const { code, nickname, avatar, gender, province, city, country } = data;
 
     const wechatResponse = await this.getWechatOpenid(code);
-    const { openid, sessionKey, unionid } = wechatResponse;
+    const { openid, session_key, unionid } = wechatResponse;
 
     let user = await UserInfo.findOne({ where: { openid } });
 
@@ -229,6 +229,55 @@ export class UserService {
       recovered: true,
       message: '门票恢复成功',
       currentTickets: user.ticketCount + 1,
+    };
+  }
+
+  async getUserItems(userId: number) {
+    const user = await UserInfo.findByPk(userId);
+    if (!user) {
+      throw new AppError(ERROR_CODES.USER_NOT_FOUND, '用户不存在');
+    }
+
+    const UserItem = require('../../models/mysql/UserItem').default;
+    const items = await UserItem.findAll({
+      where: { userId },
+      order: [['createTime', 'DESC']],
+    });
+
+    return items.map((item: any) => ({
+      id: item.id,
+      itemId: item.itemId,
+      itemName: item.itemName,
+      itemType: item.itemType,
+      quantity: item.quantity,
+      createTime: item.createTime,
+    }));
+  }
+
+  async getProgress(userId: number) {
+    const user = await UserInfo.findByPk(userId);
+    if (!user) {
+      throw new AppError(ERROR_CODES.USER_NOT_FOUND, '用户不存在');
+    }
+
+    const progress = await UserProgress.findOne({ where: { userId } });
+
+    if (!progress) {
+      return {
+        totalStars: 0,
+        totalCorrect: 0,
+        totalWrong: 0,
+        accuracy: 0,
+        levelProgress: {},
+      };
+    }
+
+    return {
+      totalStars: progress.totalStars,
+      totalCorrect: progress.totalCorrect,
+      totalWrong: progress.totalWrong,
+      accuracy: Math.round(progress.accuracy * 100) / 100,
+      levelProgress: progress.levelProgress,
     };
   }
 }

@@ -12,7 +12,7 @@ export default class UserItem extends Model {
     primaryKey: true,
     autoIncrement: true,
   })
-  id!: number;
+  declare id: number;
 
   @ForeignKey(() => UserInfo)
   @Column({
