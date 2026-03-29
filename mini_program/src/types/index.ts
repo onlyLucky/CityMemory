@@ -2,6 +2,9 @@
 // 城迹小程序 - 类型定义
 // ==========================================
 
+// 导出 API 类型
+export * from './api'
+
 // API 响应类型
 export interface ApiResponse<T = any> {
   code: number

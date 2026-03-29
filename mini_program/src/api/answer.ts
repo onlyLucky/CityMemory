@@ -226,20 +226,14 @@ export function getQuestions(params?: {
  * @returns 答题结果
  */
 export function submitAnswer(data: SubmitAnswerParams): Promise<ApiResponse<AnswerResult>> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       const question = mockQuestions.find((q) => q.question_id === data.question_id)
 
       if (!question) {
-        resolve({
+        reject({
           code: 404,
-          message: '题目不存在',
-          data: {
-            is_correct: false,
-            correct_answer: '',
-            score: 0,
-            combo: 0
-          }
+          message: '题目不存在'
         })
         return
       }
