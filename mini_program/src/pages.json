@@ -1,0 +1,126 @@
+{
+  "pages": [
+    {
+      "path": "pages/splash/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": ""
+      }
+    },
+    {
+      "path": "pages/auth/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": ""
+      }
+    },
+    {
+      "path": "pages/province-init/index",
+      "style": {
+        "navigationBarTitleText": "选择省份"
+      }
+    },
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "城迹"
+      }
+    },
+    {
+      "path": "pages/level-map/index",
+      "style": {
+        "navigationBarTitleText": "关卡地图"
+      }
+    },
+    {
+      "path": "pages/answer/index",
+      "style": {
+        "navigationBarTitleText": "答题"
+      }
+    },
+    {
+      "path": "pages/answer-result/index",
+      "style": {
+        "navigationBarTitleText": "答题结果"
+      }
+    },
+    {
+      "path": "pages/random-entry/index",
+      "style": {
+        "navigationBarTitleText": "随机挑战"
+      }
+    },
+    {
+      "path": "pages/random-answer/index",
+      "style": {
+        "navigationBarTitleText": "随机答题"
+      }
+    },
+    {
+      "path": "pages/random-result/index",
+      "style": {
+        "navigationBarTitleText": "挑战结果"
+      }
+    },
+    {
+      "path": "pages/shop/index",
+      "style": {
+        "navigationBarTitleText": "商店"
+      }
+    },
+    {
+      "path": "pages/rank/index",
+      "style": {
+        "navigationBarTitleText": "排行榜"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "个人中心"
+      }
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationBarTitleText": "设置"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "城迹",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#757575",
+    "selectedColor": "#2E7D32",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "static/icons/home.png",
+        "selectedIconPath": "static/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/rank/index",
+        "text": "排行",
+        "iconPath": "static/icons/rank.png",
+        "selectedIconPath": "static/icons/rank-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "static/icons/profile.png",
+        "selectedIconPath": "static/icons/profile-active.png"
+      }
+    ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {}
+  }
+}

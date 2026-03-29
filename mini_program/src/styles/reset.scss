@@ -1,0 +1,149 @@
+// ==========================================
+// 城迹小程序 - 样式重置
+// ==========================================
+
+@use './variables.scss' as *;
+
+// ------------------------------------------
+// 基础重置
+// ------------------------------------------
+
+page {
+  background-color: $color-bg-page;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  line-height: $line-height-normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+view,
+text,
+image,
+scroll-view {
+  box-sizing: border-box;
+}
+
+// ------------------------------------------
+// 按钮重置
+// ------------------------------------------
+
+button {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  line-height: inherit;
+  
+  &::after {
+    display: none;
+  }
+}
+
+// ------------------------------------------
+// 输入框重置
+// ------------------------------------------
+
+input,
+textarea {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: $color-text-placeholder;
+}
+
+// ------------------------------------------
+// 滚动条重置
+// ------------------------------------------
+
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+// ------------------------------------------
+// 列表重置（小程序不使用ul/ol标签，保留备用）
+// ------------------------------------------
+
+// ul,
+// ol {
+//   margin: 0;
+//   padding: 0;
+//   list-style: none;
+// }
+
+// ------------------------------------------
+// 链接重置（小程序不使用a标签，保留备用）
+// ------------------------------------------
+
+// a {
+//   color: inherit;
+//   text-decoration: none;
+// }
+
+// ------------------------------------------
+// 图片重置
+// ------------------------------------------
+
+image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// ------------------------------------------
+// 表格重置（小程序不使用table标签，保留备用）
+// ------------------------------------------
+
+// table {
+//   border-collapse: collapse;
+//   border-spacing: 0;
+// }
+
+// ------------------------------------------
+// 表单重置
+// ------------------------------------------
+
+form {
+  margin: 0;
+}
+
+// ------------------------------------------
+// 选择器重置
+// ------------------------------------------
+
+picker-view {
+  background-color: $color-bg-card;
+}
+
+// ------------------------------------------
+// 导航栏重置
+// ------------------------------------------
+
+.uni-navbar {
+  background-color: $color-bg-card;
+}
+
+// ------------------------------------------
+// 弹窗重置
+// ------------------------------------------
+
+.uni-popup {
+  z-index: $z-index-modal;
+}
+
+// ------------------------------------------
+// 加载重置
+// ------------------------------------------
+
+.uni-loading {
+  color: $color-primary;
+}
