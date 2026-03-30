@@ -995,7 +995,7 @@ services:
     restart: unless-stopped
 
   mongodb:
-    image: mongo:6.0
+    image: mongo:7
     container_name: citytrace-mongodb-dev
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
@@ -1015,7 +1015,7 @@ services:
     restart: unless-stopped
 
   redis:
-    image: redis:7.0-alpine
+    image: redis:7-alpine
     container_name: citytrace-redis-dev
     ports:
       - "6379:6379"

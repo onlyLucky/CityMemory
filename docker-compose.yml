@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.0
-    container_name: city-memory-mysql
+    container_name: mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root123456
@@ -30,8 +28,8 @@ services:
       - city-memory-network
 
   mongodb:
-    image: mongo:6.0
-    container_name: city-memory-mongodb
+    image: mongo:7
+    container_name: mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -52,8 +50,8 @@ services:
       - city-memory-network
 
   redis:
-    image: redis:7.0-alpine
-    container_name: city-memory-redis
+    image: redis:7-alpine
+    container_name: redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -115,8 +113,8 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
+      - server_logs:/app/logs
+      - server_uploads:/app/uploads
     depends_on:
       mysql:
         condition: service_healthy
@@ -129,7 +127,7 @@ services:
 
   adminer:
     image: adminer:latest
-    container_name: city-memory-adminer
+    container_name: adminer
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -143,7 +141,7 @@ services:
 
   mongo-express:
     image: mongo-express:latest
-    container_name: city-memory-mongo-express
+    container_name: mongo-express
     restart: unless-stopped
     ports:
       - "8081:8081"
@@ -164,6 +162,10 @@ volumes:
   mongodb_data:
     driver: local
   redis_data:
+    driver: local
+  server_logs:
+    driver: local
+  server_uploads:
     driver: local
 
 networks:

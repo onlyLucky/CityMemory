@@ -7,6 +7,7 @@ import logger from 'koa-logger';
 import koaBody from 'koa-body';
 import serve from 'koa-static';
 import path from 'path';
+import { koaSwagger } from 'koa2-swagger-ui';
 import config from './config';
 import { errorMiddleware } from './middlewares/error.middleware';
 import { loggerMiddleware } from './middlewares/logger.middleware';
@@ -15,6 +16,7 @@ import { initDatabase } from './config/database';
 import { initMongoDB } from './config/mongodb';
 import { initRedis } from './config/redis';
 import { logger as appLogger } from './config/logger';
+import swaggerSpec from './config/swagger';
 
 const app = new Koa();
 
@@ -48,7 +50,28 @@ const initApp = async () => {
       }),
     );
 
-    app.use(helmet());
+    app.use(
+      // 使用Helmet中间件增强安全性，设置HTTP响应头
+      helmet({
+        // 内容安全策略(CSP)配置，防止XSS攻击
+        contentSecurityPolicy: {
+          directives: {
+            // 默认资源加载策略：只允许同源资源
+            defaultSrc: ["'self'"],
+            // 脚本加载策略：允许同源、内联脚本、eval和指定CDN
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdnjs.cloudflare.com'],
+            // 样式加载策略：允许同源、内联样式和指定CDN
+            styleSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com'],
+            // 图片加载策略：允许同源、data URI和HTTPS图片
+            imgSrc: ["'self'", 'data:', 'https:'],
+            // 字体加载策略：允许同源和指定CDN字体
+            fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
+            // 连接请求策略：只允许同源请求
+            connectSrc: ["'self'"],
+          },
+        },
+      }),
+    );
 
     app.use(
       compress({
@@ -77,6 +100,25 @@ const initApp = async () => {
 
     const uploadDir = path.resolve(__dirname, '../', config.upload.dir);
     app.use(serve(uploadDir));
+
+    app.use(
+      koaSwagger({
+        routePrefix: '/api-docs',
+        swaggerOptions: {
+          url: '/api-docs.json',
+        },
+        hideTopbar: true,
+        title: '城迹 API 文档',
+      }),
+    );
+
+    app.use(async (ctx, next) => {
+      if (ctx.path === '/api-docs.json') {
+        ctx.body = swaggerSpec;
+        return;
+      }
+      await next();
+    });
 
     app.use(router.routes());
     app.use(router.allowedMethods());

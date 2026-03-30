@@ -102,7 +102,7 @@ cp .env.example .env
 ### 启动Docker服务
 
 ```bash
-docker-compose up -d mysql mongodb redis
+docker compose up -d mysql mongodb redis
 ```
 
 ### 运行开发服务器
