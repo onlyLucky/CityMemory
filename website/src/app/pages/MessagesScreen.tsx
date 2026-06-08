@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, Users, Megaphone, MailOpen, ChevronLeft } from 'lucide-react';
-import { MOCK_MESSAGES, type Message } from './game-data';
+import { MOCK_MESSAGES, type Message } from '../data/game-data';
 
 type FilterType = 'all' | 'official' | 'friend' | 'system';
 

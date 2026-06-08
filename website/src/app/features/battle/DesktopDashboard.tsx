@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Zap, Trophy, MapPin, Award, ChevronRight, Map, X } from 'lucide-react';
-import chinaMapImg from '../../imports/首页/9a39d2dacc22188ce1be74c233caeef1f9aead2d.png';
+import chinaMapImg from '../../../imports/首页/9a39d2dacc22188ce1be74c233caeef1f9aead2d.png';
 import {
   LEADERBOARD_GLOBAL, ACHIEVEMENTS, COUNTRIES,
   type LeaderboardEntry, type Achievement,
-} from './game-data';
+} from '../../data/game-data';
 
 interface DesktopDashboardProps {
   onStartBattle: () => void;

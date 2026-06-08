@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTheme } from './ThemeProvider';
+import { useTheme } from '../components/ThemeProvider';
 import { ChevronRight, Moon, Sun, Globe, Bell, Shield, Trash2, LogOut, Info, ChevronLeft, Check, X } from 'lucide-react';
 
 interface SettingsScreenProps {

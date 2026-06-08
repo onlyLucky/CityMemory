@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { X, Trophy, RotateCcw, Home, CheckCircle, XCircle, Clock, User, Globe, Flame, Zap } from 'lucide-react';
-import { COUNTRIES, AI_NAMES, getQuestionsForCountry, type Question } from './game-data';
+import { COUNTRIES, AI_NAMES, getQuestionsForCountry, type Question } from '../../data/game-data';
 import confetti from 'canvas-confetti';
 
 interface BattleFlowProps {

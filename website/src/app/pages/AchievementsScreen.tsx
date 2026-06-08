@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeft, Award, Check, Lock } from 'lucide-react';
-import { ACHIEVEMENTS, type Achievement } from './game-data';
+import { ACHIEVEMENTS, type Achievement } from '../data/game-data';
 
 interface AchievementsScreenProps {
   onBack: () => void;

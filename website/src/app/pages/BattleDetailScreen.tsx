@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronLeft } from 'lucide-react';
-import { QUESTIONS_CN } from './game-data';
+import { QUESTIONS_CN } from '../data/game-data';
 
 interface BattleDetailScreenProps {
   onBack: () => void;

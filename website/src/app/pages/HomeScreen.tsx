@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Map, Zap, Shuffle, Globe, Trophy, ChevronLeft, MapPin } from 'lucide-react';
-import { COUNTRIES, type CountryInfo } from './game-data';
+import { COUNTRIES, type CountryInfo } from '../data/game-data';
 
 import chinaMapImg from '../../imports/首页/9a39d2dacc22188ce1be74c233caeef1f9aead2d.png';
 

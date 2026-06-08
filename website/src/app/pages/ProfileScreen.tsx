@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronRight, Star, Calendar, Book, Target, Award, User, Swords, Trophy, Zap, Globe, Settings, Users } from 'lucide-react';
-import { ACHIEVEMENTS, BATTLE_HISTORY, type Achievement, type BattleRecord } from './game-data';
+import { ACHIEVEMENTS, BATTLE_HISTORY, type Achievement, type BattleRecord } from '../data/game-data';
 
 const DAYS = ['日', '一', '二', '三', '四', '五', '六'];
 

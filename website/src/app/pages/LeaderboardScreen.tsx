@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Trophy, TrendingUp, Users, Globe } from 'lucide-react';
-import { LEADERBOARD_GLOBAL, type LeaderboardEntry } from './game-data';
+import { LEADERBOARD_GLOBAL, type LeaderboardEntry } from '../data/game-data';
 
 const WEEKLY: LeaderboardEntry[] = [
   { rank: 1, name: '城市漫游者', score: 280, wins: 18, total: 23, avatar: '', province: '上海' },
